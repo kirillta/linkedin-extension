@@ -1,0 +1,13 @@
+{
+    "scripts": {
+        "test": "vitest",
+        "test:run": "vitest run",
+        "test:coverage": "vitest run --coverage"
+    },
+    "devDependencies": {
+        "@vitest/coverage-v8": "^4.1.6",
+        "jsdom": "^29.1.1",
+        "playwright": "^1.60.0",
+        "vitest": "^4.1.6"
+    }
+}

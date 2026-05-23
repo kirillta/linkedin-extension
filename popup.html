@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>LinkedIn Tracker</title>
+    <link rel="stylesheet" href="popup.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>LinkedIn Tracker</h1>
+            <p class="subtitle">Invitation tracking &amp; connection highlighting</p>
+        </header>
+
+        <div class="stats-section">
+            <h3 class="settings-title">Connect Invitations</h3>
+            <div id="invitationStatsList"></div>
+        </div>
+
+        <div class="settings-section">
+            <h3 class="settings-title">Highlighting Settings</h3>
+            <label class="toggle-label">
+                <input type="checkbox" id="highlightingToggle" class="toggle-input" />
+                <span class="toggle-text">Highlight Potential Connections on People Pages</span>
+            </label>
+
+            <label class="toggle-label">
+                <input type="checkbox" id="hideUnreachableToggle" class="toggle-input" />
+                <span class="toggle-text">Hide "LinkedIn Member" profiles on People Pages</span>
+            </label>
+
+            <div class="categories-header">
+                <button id="categoriesToggle" class="categories-toggle" aria-expanded="false">
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                    <span class="categories-label">Categories</span>
+                </button>
+                <button id="addCategoryBtn" class="btn-add-category">+ Add</button>
+            </div>
+
+            <div id="categoriesCollapsible" class="hidden">
+                <p class="categories-priority-hint">Drag to reorder · top = highest badge priority</p>
+                <div id="categoriesList"></div>
+
+                <div id="categoryForm" class="category-form hidden">
+                    <input type="text" id="categoryName" class="category-form-input"
+                        placeholder="Category name (e.g. Engineer)" maxlength="40" />
+                    <textarea id="categoryKeywords" class="category-form-textarea"
+                        placeholder="Keywords — one per line. Plain text or regex (e.g. \bengineer\b)"
+                        rows="4"></textarea>
+                    <p class="form-hint">
+                        One keyword per line. Each is matched case-insensitively against the person's job title.<br />
+                        <strong>Plain text</strong> — substring match (e.g. <code>engineer</code> matches "Senior
+                        Engineer").<br />
+                        <strong>Regex</strong> — JS syntax (e.g. <code>\bengineer\b</code> for whole-word,
+                        <code>^cto$</code> for exact). Invalid regex falls back to plain text.
+                    </p>
+                    <div class="category-form-actions">
+                        <button id="saveCategoryBtn" class="btn btn-primary btn-sm">Save</button>
+                        <button id="cancelCategoryBtn" class="btn btn-secondary btn-sm">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3 class="settings-title">Search Strings</h3>
+            <p class="search-strings-hint">Right-click any text field on LinkedIn to insert a predefined string.</p>
+
+            <div class="categories-header">
+                <button id="searchStringsToggle" class="categories-toggle" aria-expanded="false">
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                    <span class="categories-label">Strings</span>
+                </button>
+                <button id="addSearchStringBtn" class="btn-add-category">+ Add</button>
+            </div>
+
+            <div id="searchStringsCollapsible" class="hidden">
+                <div id="searchStringsList"></div>
+
+                <div id="searchStringForm" class="category-form hidden">
+                    <input type="text" id="searchStringLabel" class="category-form-input"
+                        placeholder="Label (shown in menu, e.g. HR Recruiters)" maxlength="60" />
+                    <textarea id="searchStringValue" class="category-form-textarea"
+                        placeholder="String to insert (e.g. ht,talent,hhrr)"
+                        rows="3"></textarea>
+                    <div class="category-form-actions">
+                        <button id="saveSearchStringBtn" class="btn btn-primary btn-sm">Save</button>
+                        <button id="cancelSearchStringBtn" class="btn btn-secondary btn-sm">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="actions-menu-wrapper">
+                <button id="actionsMenuBtn" class="btn-actions-trigger">More</button>
+                <div id="actionsDropdown" class="actions-dropdown hidden">
+                    <button id="exportBtn" class="dropdown-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export data
+                    </button>
+                    <button id="importBtn" class="dropdown-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        Import data
+                    </button>
+                    <hr class="dropdown-divider" />
+                    <button id="clearBtn" class="dropdown-item dropdown-item-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6l-1 14H6L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                            <path d="M9 6V4h6v2" />
+                        </svg>
+                        Clear all data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <input type="file" id="fileInput" accept=".json" style="display: none" />
+    </div>
+
+    <script src="storage-utils.js"></script>
+    <script src="palette.js"></script>
+    <script src="category-list-view.js"></script>
+    <script src="invitation-chart-view.js"></script>
+    <script src="popup-view.js"></script>
+    <script src="popup.js"></script>
+</body>
+
+</html>
