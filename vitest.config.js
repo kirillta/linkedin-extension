@@ -14,6 +14,7 @@ export default defineConfig({
                 'role-highlighter.js',
                 'company-tracker.js',
                 'background.js',
+                'prospect-scorer.js',
             ],
             thresholds: { lines: 70 },
         },
