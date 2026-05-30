@@ -77,7 +77,8 @@ This extension is intentionally **minimal and focused**. Each feature must serve
 
 ### 9. Search Strings: Insert, Don't Type
 - Store user-defined strings as `{ id, label, value }` objects under `searchStrings` in `chrome.storage.local`
-- The background service worker builds an "Insert search string" context menu on editable fields; selecting an entry sends a `lkd-insert-string` message to the content script to perform the insertion
+- The background service worker builds an "Insert search string" context menu on editable fields; selecting an entry sends a `lkd-insert-string` message to the content script to perform the insertion and submit the search
+- After inserting text, the content script dispatches `keydown`/`keypress`/`keyup` Enter events (with `composed: true`) on the input, then calls `form.requestSubmit()` on the nearest `<form>` as a fallback so LinkedIn's React handler picks it up reliably
 - The background service worker also builds an "Add to keyword category" context menu on text selections; selecting a category appends the normalized (trimmed, lowercased) selection to that category's keyword list
 - Rebuild both context-menu subtrees whenever `highlightingSettings` or `searchStrings` changes — use `chrome.contextMenus.removeAll()` before rebuilding to avoid duplicate items
 - Guard concurrent rebuilds with a `_rebuildPending` flag

@@ -131,6 +131,30 @@ chrome.runtime.onMessage.addListener((msg) => {
             el.setSelectionRange(_lastSelectionStart, _lastSelectionEnd);
 
         document.execCommand('insertText', false, msg.value);
+
+        for (const type of ['keydown', 'keypress', 'keyup']) {
+            el.dispatchEvent(new KeyboardEvent(type, {
+                key: 'Enter',
+                code: 'Enter',
+                keyCode: 13,
+                which: 13,
+                bubbles: true,
+                cancelable: true,
+                composed: true,
+            }));
+        }
+
+        // Fallback: if the input is inside a <form>, request a submit so that
+        // LinkedIn's React handler picks it up even when it ignores key events.
+        const form = el.closest('form');
+        if (form) {
+            try {
+                form.requestSubmit();
+            } catch {
+                form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }
+        }
+
         return;
     }
 
