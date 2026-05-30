@@ -8,10 +8,11 @@ const memberHider = new MemberHider();
 const connectPromoter = new ConnectPromoter();
 const invitationTracker = new InvitationTracker();
 const withdrawalTracker = new WithdrawalTracker();
+const prospectScorer = new ProspectScorer();
 
 // Features that participate in the run/onStorageChanged cycle.
 // InvitationTracker is event-driven (init()) and excluded from this array.
-const FEATURES = [companyTracker, roleHighlighter, memberHider, connectPromoter];
+const FEATURES = [companyTracker, roleHighlighter, memberHider, connectPromoter, prospectScorer];
 
 let lastUrl = window.location.href;
 let injectionTimeout = null;
@@ -26,6 +27,7 @@ async function init() {
     await companyTracker.load();
     await roleHighlighter.loadSettings();
     await memberHider.loadSettings();
+    await prospectScorer.loadSettings();
     invitationTracker.init();
     withdrawalTracker.init();
 

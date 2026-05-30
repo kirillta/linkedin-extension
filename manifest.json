@@ -27,6 +27,7 @@
         "connect-promoter.js",
         "invitation-tracker.js",
         "withdrawal-tracker.js",
+        "prospect-scorer.js",
         "content.js"
       ],
       "css": [

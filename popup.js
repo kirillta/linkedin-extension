@@ -8,6 +8,7 @@
 /* global PopupView, getHighlightingSettings, setHighlightingSettings,
           getMemberHiderSettings, setMemberHiderSettings,
           getInvitationStats, getWithdrawnStats, getSeenCompanies, setSeenCompanies,
+          getProspectScorerSettings, setProspectScorerSettings,
           BADGE_PALETTE, chrome */
 
 /** @type {PopupView} */
@@ -38,6 +39,8 @@ async function loadPopup() {
     await loadHighlightingSettings();
     await loadSearchStrings();
     await loadInvitationStats();
+    await loadProspectScorerSettings();
+    
     setupEventListeners();
 }
 
@@ -116,6 +119,19 @@ function toggleHideUnreachable(event) {
                 ? '"LinkedIn Member" profiles will be hidden'
                 : '"LinkedIn Member" profiles will be shown'
         );
+    });
+}
+
+async function loadProspectScorerSettings() {
+    const settings = await getProspectScorerSettings();
+    document.getElementById('minFollowersInput').value = settings.minFollowers;
+}
+
+function saveProspectScorerMinFollowers() {
+    const raw = parseInt(document.getElementById('minFollowersInput').value, 10);
+    const minFollowers = isNaN(raw) || raw < 0 ? 0 : raw;
+    setProspectScorerSettings({ minFollowers }).then(() => {
+        _view.showNotification(`Min. followers set to ${minFollowers}`);
     });
 }
 
@@ -331,6 +347,7 @@ function setupEventListeners() {
 
     document.getElementById('highlightingToggle').addEventListener('change', toggleHighlighting);
     document.getElementById('hideUnreachableToggle').addEventListener('change', toggleHideUnreachable);
+    document.getElementById('saveMinFollowersBtn').addEventListener('click', saveProspectScorerMinFollowers);
 
     document.getElementById('categoriesToggle').addEventListener('click', () => {
         const btn = document.getElementById('categoriesToggle');

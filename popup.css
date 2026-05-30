@@ -689,3 +689,17 @@ ul {
 .search-string-row .btn-icon {
     align-self: center;
 }
+
+/* ── Prospect Scorer settings ────────────────────────────────────────────── */
+
+.number-setting-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.number-setting-input {
+    width: 72px !important;
+    text-align: center;
+    flex: 0 0 auto;
+}

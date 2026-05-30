@@ -74,6 +74,23 @@ button[aria-label*="connect" i][aria-label*="invite" i],
   order: 9999; /* Always last when h1 is a flex container */
 }
 
+/* Prospect Scorer semaphore badge — injected on /in/ profile pages */
+.lkd-prospect-badge {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-left: 8px;
+  cursor: help;
+  flex-shrink: 0;
+  vertical-align: middle;
+  order: 9999;
+}
+
+.lkd-prospect-badge--green  { background-color: #057642; }
+.lkd-prospect-badge--yellow { background-color: #b89600; }
+.lkd-prospect-badge--red    { background-color: #cc1016; }
+
 /* Role Badge Styling - LinkedIn-Native Design */
 .lkd-role-badge {
   display: inline-block;
