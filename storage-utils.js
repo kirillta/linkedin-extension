@@ -143,14 +143,14 @@ async function migrateStorage() {
     });
 }
 
-/** @returns {Promise<{minFollowers: number}>} */
+/** @returns {Promise<{minFollowers: number, maxCompanyYears: number}>} */
 function getProspectScorerSettings() {
-    return getFromStorage(SK.PROSPECT_SCORER, { minFollowers: 100 });
+    return getFromStorage(SK.PROSPECT_SCORER, { minFollowers: 100, maxCompanyYears: 8 });
 }
 
 /**
  * Merge `patch` into the current prospectScorerSettings.
- * @param {Partial<{minFollowers: number}>} patch
+ * @param {Partial<{minFollowers: number, maxCompanyYears: number}>} patch
  */
 function setProspectScorerSettings(patch) {
     return mergeIntoStorage(SK.PROSPECT_SCORER, getProspectScorerSettings, patch);

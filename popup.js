@@ -125,13 +125,16 @@ function toggleHideUnreachable(event) {
 async function loadProspectScorerSettings() {
     const settings = await getProspectScorerSettings();
     document.getElementById('minFollowersInput').value = settings.minFollowers;
+    document.getElementById('maxCompanyYearsInput').value = settings.maxCompanyYears;
 }
 
-function saveProspectScorerMinFollowers() {
-    const raw = parseInt(document.getElementById('minFollowersInput').value, 10);
-    const minFollowers = isNaN(raw) || raw < 0 ? 0 : raw;
-    setProspectScorerSettings({ minFollowers }).then(() => {
-        _view.showNotification(`Min. followers set to ${minFollowers}`);
+function saveProspectScorerSettings() {
+    const rawFollowers = parseInt(document.getElementById('minFollowersInput').value, 10);
+    const minFollowers = isNaN(rawFollowers) || rawFollowers < 0 ? 0 : rawFollowers;
+    const rawYears = parseInt(document.getElementById('maxCompanyYearsInput').value, 10);
+    const maxCompanyYears = isNaN(rawYears) || rawYears < 1 ? 1 : rawYears;
+    setProspectScorerSettings({ minFollowers, maxCompanyYears }).then(() => {
+        _view.showNotification('Prospect Scorer settings saved');
     });
 }
 
@@ -347,7 +350,7 @@ function setupEventListeners() {
 
     document.getElementById('highlightingToggle').addEventListener('change', toggleHighlighting);
     document.getElementById('hideUnreachableToggle').addEventListener('change', toggleHideUnreachable);
-    document.getElementById('saveMinFollowersBtn').addEventListener('click', saveProspectScorerMinFollowers);
+    document.getElementById('saveProspectScorerBtn').addEventListener('click', saveProspectScorerSettings);
 
     document.getElementById('categoriesToggle').addEventListener('click', () => {
         const btn = document.getElementById('categoriesToggle');

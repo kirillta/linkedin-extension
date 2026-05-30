@@ -15,11 +15,13 @@
 class ProspectScorer {
     constructor() {
         this.minFollowers = 100;
+        this.maxCompanyYears = 8;
     }
 
     async loadSettings() {
         const settings = await getProspectScorerSettings();
         this.minFollowers = settings.minFollowers;
+        this.maxCompanyYears = settings.maxCompanyYears;
     }
 
     run() {
@@ -44,16 +46,17 @@ class ProspectScorer {
 
         const { companyCount, lastPositionCaption, lastCompanyMonths } = this._parseExperience(expSection);
 
-        // Not enough data to score yet — wait for next mutation cycle
-        if (lastPositionCaption === null && lastCompanyMonths === null)
+        // Only bail if the experience section has rendered no entries at all
+        if (companyCount === 0)
             return;
 
+        const hasDateInfo = lastPositionCaption !== null || lastCompanyMonths !== null;
         const endDateInfo = lastPositionCaption
             ? this._parseEndDate(lastPositionCaption)
             : { isPresent: true, date: null };
 
         const followerCount = this._parseFollowerCount();
-        const { level, reasons } = this._score(companyCount, endDateInfo, lastCompanyMonths, followerCount);
+        const { level, reasons } = this._score(companyCount, endDateInfo, lastCompanyMonths, followerCount, hasDateInfo);
 
         const badge = this._makeBadge(level, reasons);
         h1.setAttribute('data-lkd-prospect-scored', level);
@@ -229,8 +232,8 @@ class ProspectScorer {
     }
 
     _checkLongTenure(durationMonths) {
-        return durationMonths !== null && durationMonths > 96
-            ? 'Last company tenure > 8 years'
+        return durationMonths !== null && durationMonths > this.maxCompanyYears * 12
+            ? `Last company tenure > ${this.maxCompanyYears} years`
             : null;
     }
 
@@ -240,12 +243,17 @@ class ProspectScorer {
             : null;
     }
 
-    _score(companyCount, endDateInfo, durationMonths, followerCount) {
+    _checkNoDates(hasDateInfo) {
+        return !hasDateInfo ? 'No dates shown in experience' : null;
+    }
+
+    _score(companyCount, endDateInfo, durationMonths, followerCount, hasDateInfo) {
         const reasons = [
             this._checkSingleCompany(companyCount),
             this._checkStalePosition(endDateInfo),
             this._checkLongTenure(durationMonths),
             this._checkFollowerThreshold(followerCount),
+            this._checkNoDates(hasDateInfo),
         ].filter(Boolean);
 
         const level = reasons.length === 0 ? 'green' : reasons.length === 1 ? 'yellow' : 'red';
